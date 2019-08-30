@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ChessOne</title>
+    <link href="https://fonts.googleapis.com/css?family=Livvic&display=swap" rel="stylesheet">
+    <script language="javascript" type="text/javascript" src="js/Game.js"></script>
+    <script language="javascript" type="text/javascript" src="js/Minimax.js"></script>
+    <script language="javascript" type="text/javascript" src="js/Board.js"></script>
+    <script language="javascript" type="text/javascript" src="js/Position.js"></script>
+    <script language="javascript" type="text/javascript" src="js/Pieces.js"></script>
+</head>
+<body>
+<h1 style="font-family: 'Livvic', sans-serif">ChessOne - a lightweight neural chess engine</h1>
+<canvas style="margin: 30px; background-color: bisque" id="myCanvas" width="800" height="800"></canvas>
+<script>
+    const canvas = document.getElementById("myCanvas");
+    const ctx = canvas.getContext("2d");
+    let img = new Image();
+    img.src = "chessboard.png";
+    const MainGame = new Game(canvas.width);
+    MainGame.Update(7, 7);
+    MainGame.Draw();
+    canvas.addEventListener('click', mouseClick, false)
+    function mouseClick(event) {
+        MainGame.Update(event.clientX-40, event.clientY-114);
+        MainGame.Draw();
+    }
+</script>
+</body>
+</html>
