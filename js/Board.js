@@ -8,7 +8,6 @@ class Board {
     }
 
     Draw() {
-        ctx.drawImage(img, 0, 0, 800, 800);
         this.position.Draw();
     }
 

@@ -6,6 +6,7 @@ class Game {
     }
 
     Draw() {
+        ctx.drawImage(img, 0, 0, this.size, this.size);
         this.board.Draw();
     }
 

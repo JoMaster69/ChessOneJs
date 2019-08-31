@@ -91,6 +91,7 @@ class Position {
                 return true;
             }
             piece.updatePosition(move.end);
+            this.evaluation();
             return true;
         } else {
             return false;
@@ -100,7 +101,6 @@ class Position {
 
     PieceAt(point) {
         for (let piece of this.allPieces()) {
-            console.log("hier "+point);
             if (piece.position.x == point.x && piece.position.y == point.y) {
                 return piece;
             }
@@ -243,5 +243,77 @@ class Position {
         for (let piece of this.allPieces()) {
             piece.Draw();
         }
+    }
+
+    evaluation() {
+        console.log("hier");
+        // create a session
+        const myOnnxSession = new onnx.InferenceSession();
+        console.log("hier");
+        console.log(this.dataFormat());
+        // load the ONNX model file
+        myOnnxSession.loadModel("http://localhost:63342/Users/johannesmannhardt/PhpstormProjects/ChessOneJs/js/EvalNN.onnx").then(() => {
+            console.log("hier");
+            const inferenceInputs = new Tensor(new Float32Array(768), "float32");
+            // execute the model
+            session.run(inferenceInputs).then(output => {
+                // consume the output
+                const outputTensor = output.values().next().value;
+                console.log(`model output tensor: ${outputTensor.data}.`);
+            });
+        });
+    }
+
+    dataFormat() {
+        let finalArray = new Float32Array(768);
+        for (let piece of this.allPieces()) {
+            if (piece.color == pieceColor.WHITE) {
+                if (piece instanceof Pawn) {
+                    finalArray[this.pointToChessTile(piece.position)] = 1;
+                }
+                if (piece instanceof King) {
+                    finalArray[this.pointToChessTile(piece.position)+64] = 1;
+                }
+                if (piece instanceof Queen) {
+                    finalArray[this.pointToChessTile(piece.position)+64*2] = 1;
+                }
+                if (piece instanceof Bishop) {
+                    finalArray[this.pointToChessTile(piece.position)+64*3] = 1;
+                }
+                if (piece instanceof Rook) {
+                    finalArray[this.pointToChessTile(piece.position)+64*4] = 1;
+                }
+                if (piece instanceof Knight) {
+                    finalArray[this.pointToChessTile(piece.position)+64*5] = 1;
+                }
+            }
+            if (piece.color == pieceColor.BLACK) {
+                if (piece instanceof Pawn) {
+                    finalArray[this.pointToChessTile(piece.position)+64*6] = 1;
+                }
+                if (piece instanceof King) {
+                    finalArray[this.pointToChessTile(piece.position)+64*7] = 1;
+                }
+                if (piece instanceof Queen) {
+                    finalArray[this.pointToChessTile(piece.position)+64*8] = 1;
+                }
+                if (piece instanceof Bishop) {
+                    finalArray[this.pointToChessTile(piece.position)+64*9] = 1;
+                }
+                if (piece instanceof Rook) {
+                    finalArray[this.pointToChessTile(piece.position)+64*10] = 1;
+                }
+                if (piece instanceof Knight) {
+                    finalArray[this.pointToChessTile(piece.position)+64*11] = 1;
+                }
+            }
+        }
+        return finalArray;
+    }
+
+    pointToChessTile(point) {
+        let posX = point.x+1;
+        let posY = 7-point.y;
+        return ((posY*8)+posX);
     }
 }
